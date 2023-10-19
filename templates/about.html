@@ -1,0 +1,12 @@
+{% extends "home.html" %}
+{% block title %} <title>about</title> {% endblock %}
+{% block content %}
+    <div class="centered">
+        <h1 class="fst-italic">about me</h1>
+        <img src="{{ url_for('static', filename='images/my_photo.jpg') }}" height="60%"><br>
+        <h4 class="fst-italic">Hello, my name is Nastia and I study at Vasyl Stefanyk Precarpathian University at the Faculty of Mathematics and Informatics. My hobby is dancing, I am dancing 13 years. I have a lot of <a href="{{ url_for('soft_skills') }}">soft skills</a> and <a href="{{ url_for('hard_skills') }}">hard skills</a>. I have two web-applications written on Java with Spring framework (Library card and Food delivery). One of them you can see on my GitHub.</h4><br>
+    </div>
+{% endblock %}
+{% block marg %}
+    <span class="centered2"><a href="{{ url_for('home') }}" class="fst-italic link-secondary">home page</a></span>
+{% endblock %}

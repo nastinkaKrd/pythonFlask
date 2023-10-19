@@ -1,0 +1,19 @@
+{% extends "home.html" %}
+{% block title %}<title>Skill</title>{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="nav-scroller py-1 mb-2">
+            <nav class="nav d-flex justify-content-between">
+                <ul>
+                    <h1>My skill with number {{ index }}</h1>
+
+                        <h2>{{ skill }}</h2>
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}
+{% block marg %}
+    <div class="marg"></div>
+    <span class="centered2"><a href="{{ url_for('home') }}" class="fst-italic link-secondary">home page</a></span>
+{% endblock %}

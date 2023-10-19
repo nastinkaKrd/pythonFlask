@@ -1,0 +1,28 @@
+html, body {
+  background-color: antiquewhite;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.marg{
+    margin-bottom: 12%;
+}
+footer {
+    flex-shrink: 0;
+}
+
+.centered{
+    display: block;
+    margin-left: 15%;
+    margin-right: 15%;
+    text-align: center;
+    height: 50%;
+}
+
+.centered2{
+    display: block;
+    margin-left: 15%;
+    margin-right: 15%;
+    text-align: center;
+}
