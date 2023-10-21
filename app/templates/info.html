@@ -1,0 +1,66 @@
+{% extends "home.html" %}
+{% block title %} <title>info</title> {% endblock %}
+{% block content %}
+    <div class="centered3">
+        <h1 class="fst-italic">Greeting page</h1>
+        <h4>Nice to meet you {{ name }}</h4>
+        <form method="POST" action="/change_password">
+        <label for="new_password">If you want change password, you can do it here:</label>
+        <input type="password" name="new_password" class="form-control" required>
+        <button type="submit" class="btn btn-primary mb-3 bg-dark">Change Password</button>
+    </form>
+    {% if msg_password %}
+    <p>{{ msg_password }}</p>
+    {% endif %}
+        <form method="post" action="/logout">
+            <button type="submit" class="btn btn-primary mb-3 bg-dark">Logout</button>
+        </form>
+    <h2>Manage cookies</h2>
+    <form method="post" action="/add_cookie">
+        <label for="cookie_key">Key:</label>
+        <input type="text" class="form-control" id="cookie_key" name="key" required>
+        <label for="cookie_value">Value:</label>
+        <input type="text" class="form-control" id="cookie_value" name="value" required>
+        <label for="cookie_expiration">Expiration (seconds):</label>
+        <input type="number" class="form-control" id="cookie_expiration" name="expiration" required>
+        <button type="submit"  class="btn btn-primary mb-3 bg-dark">Add Cookie</button>
+    </form>
+    {% if msgA %}
+    <p>{{ msgA }}</p>
+    {% endif %}
+    <form method="post" action="/delete_cookie">
+        <label for="delete_key">Delete cookie by key:</label>
+        <input type="text" class="form-control" id="delete_key" name="delete_key" required>
+        <button type="submit"  class="btn btn-primary mb-3 bg-dark">Delete Cookie</button>
+    </form>
+    {% if msgD %}
+    <p>{{ msgD }}</p>
+    {% endif %}
+    <form method="post" action="/delete_all_cookies">
+        <button type="submit"  class="btn btn-primary mb-3 bg-dark">Delete all cookies</button>
+    </form>
+    {% if msgDA %}
+    <p>{{ msgDA }}</p>
+    {% endif %}
+    <h2>Cookies</h2>
+    <table class="table table-dark table-striped">
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+            <th>Expiration</th>
+            <th>Created At</th>
+        </tr>
+        {% for cookie in cookies %}
+        <tr>
+            <td>{{ cookie.key }}</td>
+            <td>{{ cookie.value }}</td>
+            <td>{{ cookie.expiration }}</td>
+            <td>{{ cookie.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+{% endblock %}
+{% block marg %}
+    <span class="centered2"><a href="{{ url_for('home') }}" class="fst-italic link-secondary">home page</a></span>
+{% endblock %}
