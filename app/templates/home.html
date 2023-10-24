@@ -21,6 +21,13 @@
         </div>
     </div>
         {% endblock %}
+    {% if get_flashed_messages(True) %}
+        {% for cat, msg in get_flashed_messages(True) %}
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-{{ cat }}">{{ msg }}</li>
+            </ul>
+        {% endfor %}
+    {% endif %}
     <main class="container">
         <div class="row mb-2">
             <div class="col-md-6">

@@ -1,8 +1,9 @@
-from flask import render_template, request, make_response, redirect, url_for, session
+from flask import render_template, request, make_response, redirect, url_for, session, flash
 import platform
 from datetime import datetime, timedelta
 from app import app
 import json
+from .forms import LoginForm, LogoutForm, ChangePasswordForm, AddCookieForm, DeleteCookieForm, DeleteAllCookiesForm
 
 my_soft_skills = ["communication", "hard-working", "polite"]
 
@@ -61,51 +62,29 @@ def hard_skills(idx):
         return "Skill not found"
 
 
-@app.route('/form')
-def form():
-    os_info = platform.platform()
-    user_agent_info = request.headers.get('User-Agent')
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return render_template("login.html", os_info=os_info, user_agent_info=user_agent_info, current_time=current_time)
-
-
-@app.route('/form/hi', methods=["GET", "POST"])
-def form_hi():
-    if request.method == "POST":
-        name = request.form.get("name")
-        password = request.form.get("password")
-        with open('app\\dataJson.json', 'r') as json_file:
-            data = json.load(json_file)
-
-        if 'name' in data and 'password' in data:
-            if session.get('password'):
-                if session.get('password') == password:
-                    return redirect(url_for("info"))
-            elif data['name'] == name and data['password'] == password:
-                session["username"] = name
-                return redirect(url_for("info"))
-    return redirect(url_for("form"))
-
-
 @app.route('/info')
 def info():
     os_info = platform.platform()
     user_agent_info = request.headers.get('User-Agent')
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     user = session.get('username')
-    if user:
-        return render_template("info.html", cookies=cookies, name=user, os_info=os_info,
-                               user_agent_info=user_agent_info, current_time=current_time, msgA=session.get('msgA'),
-                               msgD=session.get('msgD'), msgDA=session.get('msgDA'), msg_password=session.get('msg_password'))
-    else:
-        return redirect(url_for("form"))
+    form_logout = LogoutForm()
+    form_change_password = ChangePasswordForm()
+    form_add_cookie = AddCookieForm()
+    form_delete_cookie = DeleteCookieForm()
+    form_delete_all_cookies = DeleteAllCookiesForm()
+    return render_template("info.html", cookies=cookies, name=user, os_info=os_info,
+                           user_agent_info=user_agent_info, current_time=current_time, form_add_cookie=form_add_cookie,
+                           form_delete_cookie=form_delete_cookie, form_delete_all_cookies=form_delete_all_cookies,
+                           form_logout=form_logout,
+                           form_change_password=form_change_password)
 
 
 @app.route('/logout', methods=["GET", "POST"])
 def logout():
     session.pop('username')
     session.pop('password')
-    return redirect(url_for("form"))
+    return redirect(url_for("login"))
 
 
 @app.route('/add_cookie', methods=["POST"])
@@ -127,24 +106,24 @@ def add_cookie():
         cookies.append(new_cookie)
         response = make_response(redirect(url_for("info")))
         response.set_cookie(key, value, expires=expiration_time)
-        session['msgA'] = "Cookie is added"
+        flash("Cookie is added.", category="success")
         return response
     else:
-        session['msgA'] = "Error"
+        flash("Error: Cookie isn't added.", category="danger")
         return redirect(url_for("info"))
 
 
 @app.route('/delete_cookie', methods=["POST"])
 def delete_cookie():
-    delete_key = request.form.get('delete_key')
+    delete_key = request.form.get('key')
     for cookie in cookies:
         if cookie['key'] == delete_key:
             cookies.remove(cookie)
             response = make_response(redirect(url_for("info")))
             response.delete_cookie(delete_key)
-            session['msgD'] = "Cookie is deleted"
+            flash("Cookie is deleted.", category="success")
             return response
-    session['msgD'] = "Error"
+    flash("Error: Cookie is not deleted.", category="danger")
     return redirect(url_for("info"))
 
 
@@ -154,7 +133,7 @@ def delete_all_cookies():
         response = make_response(redirect(url_for("info")))
         response.delete_cookie(cookie['key'])
     cookies.clear()
-    session['msgDA'] = "Cookies are deleted"
+    flash("Cookies are deleted.", category="success")
     return response
 
 
@@ -163,13 +142,44 @@ def change_password():
     user = session.get('username')
     if user:
         new_password = request.form.get('new_password')
-
         if new_password:
             session['password'] = new_password
-            session['msg_password'] = "Password changed successfully."
+            flash("Password changed successfully.", category="success")
         else:
-            session['msg_password'] = "Error: Password cannot be empty."
+            flash("Error: Password cannot be empty.", category="danger")
 
         return redirect(url_for("info"))
 
-    return redirect(url_for("form"))
+    return redirect(url_for("login"))
+
+
+@app.route("/login-form", methods=['GET', 'POST'])
+def login():
+    os_info = platform.platform()
+    user_agent_info = request.headers.get('User-Agent')
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    form_main = LoginForm()
+    if request.method == "POST":
+        if form_main.validate_on_submit():
+            username = form_main.username.data
+            password = form_main.password.data
+            remember = form_main.remember.data
+            with open('app\\dataJson.json', 'r') as json_file:
+                data = json.load(json_file)
+            if 'name' in data and 'password' in data:
+                if session.get('password') and session.get("username"):
+                    if session.get('password') == password and session.get("username") == username:
+                        flash("You are logged in successfully", category="success")
+                        return redirect(url_for("info"))
+                elif data['name'] == username and data['password'] == password:
+                    if remember:
+                        session["username"] = username
+                        session["password"] = password
+                        flash("You are logged in successfully and remembered", category="success")
+                    else:
+                        flash("You are logged in successfully", category="success")
+                    return redirect(url_for("info"))
+                else:
+                    flash("You aren't logged in", category="danger")
+    return render_template("login.html", form_main=form_main, os_info=os_info, user_agent_info=user_agent_info, current_time=current_time)
+
