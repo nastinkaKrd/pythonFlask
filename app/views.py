@@ -11,36 +11,34 @@ my_hard_skills = ["Java", "Spring", "OOD", "Rest api", "MySql", "Postgresql", "P
 
 cookies = []
 
+nav_links = [
+    {"text": "Home page", "url": "home"},
+    {"text": "About me", "url": "about"},
+    {"text": "My soft skills", "url": "soft_skills"},
+    {"text": "My hard skills", "url": "hard_skills"},
+    {"text": "Form page", "url": "login"},
+]
 
 @app.route('/')
 def home():
     os_info = platform.platform()
     user_agent_info = request.headers.get('User-Agent')
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return render_template("home.html", os_info=os_info, user_agent_info=user_agent_info, current_time=current_time)
+    return render_template("home.html", os_info=os_info, user_agent_info=user_agent_info, current_time=current_time, nav_links=nav_links)
 
 
 @app.route('/about')
 def about():
-    os_info = platform.platform()
-    user_agent_info = request.headers.get('User-Agent')
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return render_template("about.html", os_info=os_info, user_agent_info=user_agent_info, current_time=current_time)
+    return render_template("about.html")
 
 
 @app.route('/soft_skills', defaults={'idx': None})
 @app.route('/soft_skills/<int:idx>')
 def soft_skills(idx):
-    os_info = platform.platform()
-    user_agent_info = request.headers.get('User-Agent')
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     if idx is None:
-        return render_template("soft-skills.html", soft_skills=my_soft_skills, os_info=os_info,
-                               user_agent_info=user_agent_info, current_time=current_time)
+        return render_template("soft-skills.html", soft_skills=my_soft_skills)
     elif 0 <= idx <= len(my_soft_skills):
-        return render_template("skill.html", skill=my_soft_skills[idx - 1], index=idx, hard_skills=my_hard_skills,
-                               os_info=os_info, user_agent_info=user_agent_info, current_time=current_time)
+        return render_template("skill.html", skill=my_soft_skills[idx - 1], index=idx, soft_skills=my_soft_skills)
     else:
         return "Skill not found"
 
@@ -48,33 +46,23 @@ def soft_skills(idx):
 @app.route('/hard_skills', defaults={'idx': None})
 @app.route('/hard_skills/<int:idx>')
 def hard_skills(idx):
-    os_info = platform.platform()
-    user_agent_info = request.headers.get('User-Agent')
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     if idx is None:
-        return render_template("hard-skills.html", hard_skills=my_hard_skills, os_info=os_info,
-                               user_agent_info=user_agent_info, current_time=current_time)
+        return render_template("hard-skills.html", hard_skills=my_hard_skills)
     elif 0 <= idx <= len(my_hard_skills):
-        return render_template("skill.html", skill=my_hard_skills[idx - 1], index=idx, hard_skills=my_hard_skills,
-                               os_info=os_info, user_agent_info=user_agent_info, current_time=current_time)
+        return render_template("skill.html", skill=my_hard_skills[idx - 1], index=idx, hard_skills=my_hard_skills)
     else:
         return "Skill not found"
 
 
 @app.route('/info')
 def info():
-    os_info = platform.platform()
-    user_agent_info = request.headers.get('User-Agent')
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     user = session.get('username')
     form_logout = LogoutForm()
     form_change_password = ChangePasswordForm()
     form_add_cookie = AddCookieForm()
     form_delete_cookie = DeleteCookieForm()
     form_delete_all_cookies = DeleteAllCookiesForm()
-    return render_template("info.html", cookies=cookies, name=user, os_info=os_info,
-                           user_agent_info=user_agent_info, current_time=current_time, form_add_cookie=form_add_cookie,
+    return render_template("info.html", cookies=cookies, name=user, form_add_cookie=form_add_cookie,
                            form_delete_cookie=form_delete_cookie, form_delete_all_cookies=form_delete_all_cookies,
                            form_logout=form_logout,
                            form_change_password=form_change_password)
@@ -155,23 +143,19 @@ def change_password():
 
 @app.route("/login-form", methods=['GET', 'POST'])
 def login():
-    os_info = platform.platform()
-    user_agent_info = request.headers.get('User-Agent')
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     form_main = LoginForm()
     if request.method == "POST":
-        if form_main.validate_on_submit():
-            username = form_main.username.data
-            password = form_main.password.data
-            remember = form_main.remember.data
+        username = form_main.username.data
+        password = form_main.password.data
+        remember = form_main.remember.data
+        if session.get('password') and session.get("username"):
+            if session.get('password') == password and session.get("username") == username:
+                return redirect(url_for("info"))
+        else:
             with open('app\\dataJson.json', 'r') as json_file:
                 data = json.load(json_file)
             if 'name' in data and 'password' in data:
-                if session.get('password') and session.get("username"):
-                    if session.get('password') == password and session.get("username") == username:
-                        flash("You are logged in successfully", category="success")
-                        return redirect(url_for("info"))
-                elif data['name'] == username and data['password'] == password:
+                if data['name'] == username and data['password'] == password:
                     if remember:
                         session["username"] = username
                         session["password"] = password
@@ -181,5 +165,6 @@ def login():
                     return redirect(url_for("info"))
                 else:
                     flash("You aren't logged in", category="danger")
-    return render_template("login.html", form_main=form_main, os_info=os_info, user_agent_info=user_agent_info, current_time=current_time)
+
+    return render_template("login.html", form_main=form_main)
 

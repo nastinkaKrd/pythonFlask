@@ -1,11 +1,9 @@
 <nav class="nav d-flex justify-content-between">
-                <ul>
-                    <h3>
-                        <li class="fst-italic"><a class="p-2 link-secondary" href="{{ url_for('home') }}">Home page</a></li><br>
-                        <li class="fst-italic"><a class="p-2 link-secondary" href="{{ url_for('about') }}">About be</a></li><br>
-                        <li class="fst-italic"><a class="p-2 link-secondary" href="{{ url_for('soft_skills') }}">My soft skills</a></li><br>
-                        <li class="fst-italic"><a class="p-2 link-secondary" href="{{ url_for('hard_skills') }}">My hard skills</a></li><br>
-                        <li class="fst-italic"><a class="p-2 link-secondary" href="{{ url_for('login') }}">Form page</a></li><br>
-                    </h3>
-                </ul>
-            </nav>
+    <ul>
+        <h3>
+            {% for link in nav_links %}
+                <li class="fst-italic"><a class="p-2 link-secondary" href="{{ url_for(link['url']) }}">{{ link['text'] }}</a></li><br>
+            {% endfor %}
+        </h3>
+    </ul>
+</nav>

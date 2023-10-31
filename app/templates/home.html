@@ -58,9 +58,11 @@
     {% endblock %}
     <footer class="pt-4 my-md-5 pt-md-5">
         <div class="rounded text-bg-dark">
+            {% block footer %}
             <div>
                 <p class="display-10 fst-italic">os info -> {{ os_info }}  <br>user agent info -> {{ user_agent_info }} <br>current time -> {{ current_time }}</p>
             </div>
+            {% endblock %}
         </div>
     </footer>
 </body>

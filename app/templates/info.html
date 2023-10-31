@@ -1,25 +1,7 @@
 {% extends "home.html" %}
 {% block title %} <title>info</title> {% endblock %}
 {% block content %}
-{% macro render_field(field) %}
-    <dt>
-        {{ field.label }}
-    </dt>
-    {% if field.errors %}
-        <dd>
-            {{ field(style="background-color: red;", **kwargs) | safe }}
-        </dd>
-        <ul>
-            {% for error in field.errors %}
-            <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-    <dd>
-        {{ field(**kwargs) | safe }}
-    </dd>
-    {% endif %}
-{% endmacro %}
+{% from "macros.html" import render_field %}
     <div class="centered3">
         <h1 class="fst-italic">Greeting page</h1>
         <h3>Hello</h3>
@@ -73,4 +55,9 @@
 {% endblock %}
 {% block marg %}
     <span class="centered2"><a href="{{ url_for('home') }}" class="fst-italic link-secondary">home page</a></span>
+{% endblock %}
+{% block footer %}
+    <div>
+        <p class="display-10 fst-italic">@nastinka_krd</p>
+    </div>
 {% endblock %}
