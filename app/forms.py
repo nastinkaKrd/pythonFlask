@@ -50,3 +50,9 @@ class ChangePasswordForm(FlaskForm):
         Length(min=4, max=10)
     ])
     submit = SubmitField("Change password")
+
+
+class ItemForm(FlaskForm):
+    title = StringField('Enter title here')
+    description = StringField('Enter description here')
+    submit = SubmitField('Add Item')

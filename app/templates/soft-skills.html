@@ -1,4 +1,4 @@
-{% extends "home.html" %}
+{% extends "base.html" %}
 
 {% block title %}<title>Soft skills</title>{% endblock %}
 
@@ -18,7 +18,7 @@
 {% endblock %}
 {% block marg %}
     <div class="marg"></div>
-    <span class="centered2"><a href="{{ url_for('home') }}" class="fst-italic link-secondary">home page</a></span>
+    <span class="centered2"><a href="{{ url_for('base') }}" class="fst-italic link-secondary">base page</a></span>
 {% endblock %}
 {% block footer %}
     <div>

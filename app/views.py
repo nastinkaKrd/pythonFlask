@@ -3,7 +3,10 @@ import platform
 from datetime import datetime, timedelta
 from app import app
 import json
-from .forms import LoginForm, LogoutForm, ChangePasswordForm, AddCookieForm, DeleteCookieForm, DeleteAllCookiesForm
+from .forms import LoginForm, LogoutForm, ChangePasswordForm, AddCookieForm, DeleteCookieForm, DeleteAllCookiesForm, ItemForm
+from .models import Todo, db
+
+
 
 my_soft_skills = ["communication", "hard-working", "polite"]
 
@@ -17,14 +20,54 @@ nav_links = [
     {"text": "My soft skills", "url": "soft_skills"},
     {"text": "My hard skills", "url": "hard_skills"},
     {"text": "Form page", "url": "login"},
+    {"text": "TODO page", "url": "todo"}
 ]
 
-@app.route('/')
+
+
+
+@app.route('/home')
 def home():
+    return render_template("home.html")
+
+
+@app.route('/todo', methods=['GET', 'POST'])
+def todo():
+    form = ItemForm()
+    todo_list = db.session.query(Todo).all()
+    if form.validate_on_submit():
+        title = form.title.data
+        description = form.description.data
+        new_todo = Todo(title=title, description=description, complete=False)
+        db.session.add(new_todo)
+        db.session.commit()
+        return redirect(url_for("todo"))
+
+    return render_template('todo.html', todo_list=todo_list, form=form)
+
+
+@app.route("/update/<int:todo_id>")
+def update(todo_id):
+    todo = db.session.query(Todo).filter(Todo.id == todo_id).first()
+    todo.complete = not todo.complete
+    db.session.commit()
+    return redirect(url_for("todo"))
+
+
+@app.route("/delete/<int:todo_id>")
+def delete(todo_id):
+    todo = db.session.query(Todo).filter(Todo.id == todo_id).first()
+    db.session.delete(todo)
+    db.session.commit()
+    return redirect(url_for("todo"))
+
+
+@app.route('/')
+def base():
     os_info = platform.platform()
     user_agent_info = request.headers.get('User-Agent')
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return render_template("home.html", os_info=os_info, user_agent_info=user_agent_info, current_time=current_time, nav_links=nav_links)
+    return render_template("base.html", os_info=os_info, user_agent_info=user_agent_info, current_time=current_time, nav_links=nav_links)
 
 
 @app.route('/about')
