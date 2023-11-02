@@ -3,8 +3,8 @@ import platform
 from datetime import datetime, timedelta
 from app import app
 import json
-from .forms import LoginForm, LogoutForm, ChangePasswordForm, AddCookieForm, DeleteCookieForm, DeleteAllCookiesForm, ItemForm
-from .models import Todo, db
+from .forms import LoginForm, LogoutForm, ChangePasswordForm, AddCookieForm, DeleteCookieForm, DeleteAllCookiesForm, ItemForm, FeedbackForm
+from .models import Todo, db, Feedback
 
 
 
@@ -20,10 +20,26 @@ nav_links = [
     {"text": "My soft skills", "url": "soft_skills"},
     {"text": "My hard skills", "url": "hard_skills"},
     {"text": "Form page", "url": "login"},
-    {"text": "TODO page", "url": "todo"}
+    {"text": "TODO page", "url": "todo"},
+    {"text": "Feedback page", "url": "feedback"}
 ]
 
 
+@app.route("/feedback", methods=['GET', 'POST'])
+def feedback():
+    form = FeedbackForm()
+    feedbacks = db.session.query(Feedback).all()
+    if form.validate_on_submit():
+        username = form.username.data
+        feedback_msg = form.feedback.data
+        if username and feedback_msg:
+            db.session.add(Feedback(username=username, feedback=feedback_msg))
+            db.session.commit()
+            flash("Feedback is added!", category="success")
+        else:
+            flash("Feedback isn't added!", category="danger")
+        return redirect(url_for("feedback"))
+    return render_template('feedback.html', feedbacks=feedbacks, form=form)
 
 
 @app.route('/home')

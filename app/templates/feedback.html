@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %} <title>feedback</title> {% endblock %}
+{% block content %}
+    <section class="vh-100">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-lg-9 col-xl-7">
+        <div class="card rounded-3">
+          <div class="card-body p-4">
+          <h4 class="text-center my-3 pb-3">Form for feedbacks</h4>
+            <form method="post" class="row g-3">
+            <div class="col-4">
+                <div class="form-outline">
+                    {{ form.hidden_tag() }}
+                    {{ form.username(class="form-control", placeholder="Enter your username here") }}<br>
+                    {{ form.feedback(class="form-control", placeholder="Enter your feedback here") }}
+                </div>
+            </div>
+            <div class="col-6">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+            </form>
+            <table class="table mb-4">
+                <thead>
+                    <tr>
+                      <th scope="col">No.</th>
+                      <th scope="col">Username</th>
+                      <th scope="col">Feedback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feedback in feedbacks %}
+                    <tr>
+                        <th scope="row">{{feedback.id }}</th>
+                        <td>{{ feedback.username }}</td>
+                        <td>{{ feedback.feedback }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block marg %}
+    <span class="centered2"><a href="{{ url_for('base') }}" class="fst-italic link-secondary">base page</a></span>
+{% endblock %}
+{% block footer %}
+    <div>
+        <p class="display-10 fst-italic">@nastinka_krd</p>
+    </div>
+{% endblock %}
+
