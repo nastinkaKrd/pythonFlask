@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
-from wtforms.validators import DataRequired, Length
+from app import models
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, FileField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Regexp
 
 
 class LoginForm(FlaskForm):
@@ -62,3 +63,49 @@ class FeedbackForm(FlaskForm):
     username = StringField('Enter username here')
     feedback = StringField('Enter feedback here')
     submit = SubmitField('Add feedback')
+
+
+class UserForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    image = FileField('Profile Image')
+    submit = SubmitField('Add User')
+
+
+class DeleteUserForm(FlaskForm):
+    submit = SubmitField('Delete User')
+
+
+class ChangeUserForm(FlaskForm):
+    password = PasswordField('New password', validators=[DataRequired()])
+    submit = SubmitField('Update User')
+
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[
+        DataRequired(),
+        Length(min=4, max=14, message="Must be between 4 and 14 characters"),
+        Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0, 'Username must have only letters, numbers, dots or underscores')
+    ])
+    email = StringField('Email', validators=[DataRequired(), Email(message="Invalid email address")])
+    image = FileField('Profile Image')
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, message="Password must be at least 6 characters")])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message="Passwords must match")])
+    submit = SubmitField('Sign up')
+
+    def validate_email(self, field):
+        if models.User.query.filter_by(email=field.data).first():
+            raise ValidationError('Email already registered.')
+
+
+    def validate_username(self, field):
+        if models.User.query.filter_by(username=field.data).first():
+            raise ValidationError('Username already in use.')
+
+
+class LoginForm2(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email(message="Invalid email address")])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember = BooleanField('Remember Me')
+    submit = SubmitField('Login')

@@ -1,11 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy
-from app import app
-from flask_migrate import Migrate
+from app import db
+from flask_bcrypt import Bcrypt
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+bcrypt = Bcrypt()
 
 
 class Todo(db.Model):
@@ -19,3 +15,20 @@ class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
     feedback = db.Column(db.String(350))
+
+
+class User (db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default='static/images/my_photo')
+    password = db.Column(db.String(60), nullable=False)
+
+    def set_password(self, password):
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)
+
+    def repr(self):
+        return f"User('{self.username}', '{self.email}')"

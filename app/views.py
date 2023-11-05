@@ -1,12 +1,14 @@
+import os
+import time
+
 from flask import render_template, request, make_response, redirect, url_for, session, flash
 import platform
 from datetime import datetime, timedelta
 from app import app
 import json
-from .forms import LoginForm, LogoutForm, ChangePasswordForm, AddCookieForm, DeleteCookieForm, DeleteAllCookiesForm, ItemForm, FeedbackForm
-from .models import Todo, db, Feedback
-
-
+from .forms import LoginForm, RegistrationForm, LogoutForm, LoginForm2, ChangePasswordForm, AddCookieForm, DeleteCookieForm, DeleteAllCookiesForm, ItemForm, FeedbackForm, UserForm, ChangeUserForm, DeleteUserForm
+from .models import Todo, db, Feedback, User
+from werkzeug.utils import secure_filename
 
 my_soft_skills = ["communication", "hard-working", "polite"]
 
@@ -21,8 +23,110 @@ nav_links = [
     {"text": "My hard skills", "url": "hard_skills"},
     {"text": "Form page", "url": "login"},
     {"text": "TODO page", "url": "todo"},
-    {"text": "Feedback page", "url": "feedback"}
+    {"text": "Feedback page", "url": "feedback"},
+    {"text": "User page", "url": "user"},
+    {"text": "Register", "url": "register"},
+    {"text": "Login2", "url": "login2"}
 ]
+
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        new_username = form.username.data
+        new_email = form.email.data
+        new_password = form.password.data
+        profile_image = form.image.data
+
+        if profile_image:
+            filename = secure_filename(profile_image.filename)
+            unique_filename = f"{new_username}_{int(time.time())}_{filename}.jpg"
+            file_path = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], unique_filename)
+            profile_image.save(file_path)
+
+            profile_image_path = f'static/images/{unique_filename}'
+        else:
+            profile_image_path = 'static/images/my_photo.jpg'
+
+        if new_username and new_email and new_password:
+            user = User(username=new_username, email=new_email, image_file=profile_image_path)
+            user.set_password(new_password)
+            db.session.add(user)
+            db.session.commit()
+            flash(f'Account created for {form.username.data} !', category='success')
+            return redirect(url_for("base"))
+        return redirect(url_for('login2'))
+    return render_template('registr.html', form=form)
+
+
+@app.route("/login2", methods=['GET', 'POST'])
+def login2():
+    form = LoginForm2()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(form.password.data):
+            if form.remember.data:
+                session["email"] = form.email.data
+                session["password"] = form.password.data
+                flash("You are logged in successfully and remembered", category="success")
+            else:
+                flash('You have been logged in!', category='success')
+            return redirect(url_for('base'))
+        else:
+            flash('Invalid email or password', 'danger')
+            return redirect(url_for('login'))
+    return render_template('login2.html', form=form)
+
+
+@app.route('/user', methods=['GET', 'POST'])
+def user():
+    form = UserForm()
+    del_form = DeleteUserForm()
+    change_form = ChangeUserForm()
+    users = User.query.all()
+    users_amount = User.query.count()
+
+    if form.validate_on_submit():
+        new_username = form.username.data
+        new_email = form.email.data
+        new_password = form.password.data
+        profile_image = form.image.data
+
+        if profile_image:
+            filename = secure_filename(profile_image.filename)
+            unique_filename = f"{new_username}_{int(time.time())}_{filename}.jpg"
+            file_path = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], unique_filename)
+            profile_image.save(file_path)
+
+            profile_image_path = f'static/images/{unique_filename}'
+        else:
+            profile_image_path = 'static/images/my_photo.jpg'
+
+        if new_username and new_email and new_password:
+            user = User(username=new_username, email=new_email, image_file=profile_image_path)
+            user.set_password(new_password)
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for("user"))
+
+    if del_form.validate_on_submit():
+        user_to_delete = User.query.filter_by(id=2).first()
+        if user_to_delete:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+        return redirect(url_for("user"))
+
+    if change_form.validate_on_submit():
+        new_password = request.form.get('new_password')
+        user_to_update = User.query.filter_by(id=1).first()
+
+        if user_to_update:
+            user_to_update.password = new_password
+            db.session.commit()
+        return redirect(url_for("user"))
+
+    return render_template('users.html', users=users, users_amount=users_amount, form=form, del_form=del_form, change_form=change_form)
 
 
 @app.route("/feedback", methods=['GET', 'POST'])
