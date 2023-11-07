@@ -1,9 +1,12 @@
 import os
 import time
-
+from flask_login import login_user, current_user, logout_user, login_required
 from flask import render_template, request, make_response, redirect, url_for, session, flash
 import platform
 from datetime import datetime, timedelta
+
+from flask_login import login_user
+
 from app import app
 import json
 from .forms import LoginForm, RegistrationForm, LogoutForm, LoginForm2, ChangePasswordForm, AddCookieForm, DeleteCookieForm, DeleteAllCookiesForm, ItemForm, FeedbackForm, UserForm, ChangeUserForm, DeleteUserForm
@@ -26,12 +29,16 @@ nav_links = [
     {"text": "Feedback page", "url": "feedback"},
     {"text": "User page", "url": "user"},
     {"text": "Register", "url": "register"},
-    {"text": "Login2", "url": "login2"}
+    {"text": "Login3", "url": "login3"},
+    {"text": "Logout new", "url": "logout_new"},
+    {"text": "Choice", "url": "choice"}
 ]
 
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('base'))
     form = RegistrationForm()
     if form.validate_on_submit():
         new_username = form.username.data
@@ -58,6 +65,37 @@ def register():
             return redirect(url_for("base"))
         return redirect(url_for('login2'))
     return render_template('registr.html', form=form)
+
+
+@app.route("/login3", methods=['GET', 'POST'])
+def login3():
+    if current_user.is_authenticated:
+        return redirect(url_for('choice'))
+    form = LoginForm2()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        login_user(user, remember=form.remember.data)
+        flash('You have been logged in!', category='success')
+        return redirect(url_for('base'))
+    return render_template('login2.html', form=form)
+
+
+@app.route("/choice")
+def choice():
+    return render_template('choice.html')
+
+
+@app.route('/my_profile')
+@login_required
+def my_profile():
+    return render_template('my_profile.html', user=current_user)
+
+
+@app.route("/logout-new")
+def logout_new():
+    logout_user()
+    flash("You have been logged out", category='success')
+    return redirect(url_for('base'))
 
 
 @app.route("/login2", methods=['GET', 'POST'])

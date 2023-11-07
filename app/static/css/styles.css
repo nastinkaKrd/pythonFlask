@@ -33,3 +33,8 @@ footer {
     margin-right: 15%;
     text-align: center;
 }
+
+a{
+    text-decoration: none;
+    color: cadetblue;
+}

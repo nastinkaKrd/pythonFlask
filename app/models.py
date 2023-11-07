@@ -1,5 +1,6 @@
-from app import db
+from app import db, login_manager
 from flask_bcrypt import Bcrypt
+from flask_login import UserMixin
 
 bcrypt = Bcrypt()
 
@@ -17,7 +18,12 @@ class Feedback(db.Model):
     feedback = db.Column(db.String(350))
 
 
-class User (db.Model):
+@login_manager.user_loader
+def user_loader(user_id):
+    return User.query.get(int(user_id))
+
+
+class User (db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
