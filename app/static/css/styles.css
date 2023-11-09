@@ -34,6 +34,13 @@ footer {
     text-align: center;
 }
 
+.centered4{
+    display: block;
+    margin-left: 40%;
+    margin-right: 40%;
+    text-align: center;
+}
+
 a{
     text-decoration: none;
     color: cadetblue;

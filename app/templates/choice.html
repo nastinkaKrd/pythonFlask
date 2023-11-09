@@ -5,6 +5,7 @@
         {% if current_user.is_authenticated %}
             <h3 class="fst-italic"><a href="{{ url_for('my_profile') }}">Мій профіль</a></h3>
             <h3 class="fst-italic"><a href="{{ url_for('logout_new') }}">Вихід</a></h3>
+            <h3 class="fst-italic"><a href="{{ url_for('change_user_password') }}">Змінити пароль</a></h3>
         {% else %}
             <h3 class="fst-italic"><a href="{{ url_for('register') }}">Зареєструватися</a></h3>
             <h3 class="fst-italic"><a href="{{ url_for('login3') }}">Увійти</a></h3>

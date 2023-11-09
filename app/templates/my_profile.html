@@ -1,25 +1,28 @@
 {% extends "base.html" %}
 {% block title %} <title>about</title> {% endblock %}
 {% block content %}
-    <div class="centered">
-        <table class="table mb-4 fst-italic">
-            <thead>
-                    <tr>
-                      <th scope="col">No.</th>
-                      <th scope="col">Username</th>
-                      <th scope="col">Email</th>
-                      <th scope="col">Image</th>
-                    </tr>
-                </thead>
-            <tbody>
-                <tr>
-                <th scope="row">{{user.id }}</th>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td><img src="{{ user.image_file }}" width="100" ></td>
-            </tr>
-            </tbody>
-        </table>
+    {% from "macros.html" import render_field %}
+    <div class="centered4">
+    <div class="content-section">
+    <div class="media" style="display: flex; align-items: center;">
+        <img class="rounded-circle" src="{{ user.image_file }}" width="100">
+        <div class="media-body" style="margin-left: 15px;">
+            <h2 class="account-heading">{{ user.username }}</h2>
+            <p class="text-secondary">{{ user.email }}</p>
+        </div>
+    </div>
+        <form action="{{ url_for('my_profile') }}" method="post" class="row g-3" enctype="multipart/form-data" novalidate>
+        <div class="form-outline">
+            {{ form.hidden_tag() }}
+            {{ render_field(form.username, class="form-control") }}<br>
+            {{ render_field(form.email, class="form-control") }}<br>
+            {{ render_field(form.about_me, class="form-control") }}<br>
+            {{ render_field(form.image, class="form-control") }}<br>
+            {{ form.submit(class="btn btn-primary mb-3 bg-dark", label="update")}}
+        </div>
+    </form>
+        <p>Last seen: {{ user.last_seen }}</p>
+</div>
     </div>
 {% endblock %}
 {% block marg %}

@@ -1,7 +1,11 @@
+from flask_login import current_user
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed
+
 from app import models
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, FileField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, FileField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Regexp
+
 
 
 class LoginForm(FlaskForm):
@@ -109,3 +113,30 @@ class LoginForm2(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    about_me = TextAreaField('About Me', validators=[Length(max=140)])
+    image = FileField('Update image', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField()
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = models.User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('This username is already taken. Please choose a different one.')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = models.User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError('This email is already taken. Please choose a different one.')
+
+
+class ChangeUserPassword(FlaskForm):
+    old_password = PasswordField('Old password', validators=[DataRequired(), Length(min=6, message="Password must be at least 6 characters")])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, message="Password must be at least 6 characters")])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message="Passwords must match")])
+    submit = SubmitField('Update')
