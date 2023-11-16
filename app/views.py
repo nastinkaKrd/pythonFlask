@@ -79,9 +79,7 @@ def my_profile():
             resized_file_path = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], unique_filename)
             resized_image.save(resized_file_path)
             profile_image_path = f'static/images/{unique_filename}'
-        else:
-            profile_image_path = current_user.image_file
-        current_user.image_file = profile_image_path
+            current_user.image_file = profile_image_path
         db.session.commit()
         flash('Your account has been updated!', 'success')
         return redirect(url_for('my_profile'))
@@ -89,7 +87,7 @@ def my_profile():
         form.username.data = current_user.username
         form.email.data = current_user.email
         form.about_me.data = current_user.about_me
-    return render_template('my_profile.html', user=current_user, form=form)
+    return render_template('my_profile.html', form=form)
 
 
 @app.route("/register", methods=['GET', 'POST'])

@@ -5,10 +5,10 @@
     <div class="centered4">
     <div class="content-section">
     <div class="media" style="display: flex; align-items: center;">
-        <img class="rounded-circle" src="{{ user.image_file }}" width="100">
+        <img class="rounded-circle" src="{{ current_user.image_file }}" width="100">
         <div class="media-body" style="margin-left: 15px;">
-            <h2 class="account-heading">{{ user.username }}</h2>
-            <p class="text-secondary">{{ user.email }}</p>
+            <h2 class="account-heading">{{ current_user.username }}</h2>
+            <p class="text-secondary">{{ current_user.email }}</p>
         </div>
     </div>
         <form action="{{ url_for('my_profile') }}" method="post" class="row g-3" enctype="multipart/form-data" novalidate>
@@ -21,7 +21,7 @@
             {{ form.submit(class="btn btn-primary mb-3 bg-dark", label="update")}}
         </div>
     </form>
-        <p>Last seen: {{ user.last_seen }}</p>
+        <p>Last seen: {{ current_user.last_seen }}</p>
 </div>
     </div>
 {% endblock %}
