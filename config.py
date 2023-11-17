@@ -1,8 +1,29 @@
 from flask_wtf import CSRFProtect
-from app import app
+from flask import Flask
+from os import environ, path
 
+basedir = path.abspath(path.dirname(__file__))
 
-app.secret_key = b"secret"
+app = Flask(__name__)
 csrf = CSRFProtect(app)
-SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite'
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+class Config:
+    DEBUG = False
+    DEVELOPMENT = False
+    SECRET_KEY = environ.get('SECRET_KEY') or 'secret'
+    FLASK_SECRET = SECRET_KEY
+
+
+class LocalConfig(Config):
+    DEVELOPMENT = True
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+csrf.init_app(app)
+
+config = {
+    'local': LocalConfig
+}

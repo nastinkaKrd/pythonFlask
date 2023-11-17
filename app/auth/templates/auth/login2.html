@@ -1,0 +1,25 @@
+{% extends "other/base.html" %}
+{% block title %} <title>login2</title> {% endblock %}
+{% block content %}
+{% from "other/macros.html" import render_field %}
+    <div class="centered">
+    <h2>Login page</h2>
+    <form action="{{ url_for('auth.login3') }}" method="post" class="row g-3" novalidate>
+        <div class="form-outline">
+            {{ form.hidden_tag() }}
+            {{ render_field(form.email, class="form-control", placeholder="Enter your email here") }}<br>
+            {{ render_field(form.password, class="form-control", placeholder="Enter your password here") }}<br>
+            {{ render_field(form.remember, class="mb-3 bg-dark") }}
+            {{ render_field(form.submit, class="btn btn-primary mb-3 bg-dark") }}
+        </div>
+    </form>
+    </div>
+{% endblock %}
+{% block marg %}
+    <span class="centered2"><a href="{{ url_for('appb.base') }}" class="fst-italic link-secondary">base page</a></span>
+{% endblock %}
+{% block footer %}
+    <div>
+        <p class="display-10 fst-italic">@nastinka_krd</p>
+    </div>
+{% endblock %}

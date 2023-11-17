@@ -1,0 +1,70 @@
+{% extends "other/base.html" %}
+{% block title %} <title>todo</title> {% endblock %}
+{% block content %}
+    <section class="vh-100">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-lg-9 col-xl-7">
+        <div class="card rounded-3">
+          <div class="card-body p-4">
+
+            <h4 class="text-center my-3 pb-3">Python Flask Simple To Do - SQLAlchemy</h4>
+            <form method="post" class="row mb-4">
+            <div class="col-4">
+                <div class="form-outline">
+                    {{ form.hidden_tag() }}
+                    {{ form.title(class="form-control", placeholder="Enter item here") }}
+                    {{ form.description(class="form-control", placeholder="Enter description here") }}
+                </div>
+            </div>
+            <div class="col-6">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+            </form>
+            <table class="table mb-4">
+                <thead>
+                    <tr>
+                      <th scope="col">No.</th>
+                      <th scope="col">Todo item</th>
+                      <th scope="col">Status</th>
+                        <th scope="col">Description</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for todo in todo_list %}
+                    <tr>
+                        <th scope="row">{{todo.id }}</th>
+                        <td>{{ todo.title }}</td>
+                        <td>
+                            {% if todo.complete == False %}
+                                <div class="alert alert-secondary" role="alert">In progress</div>
+                            {% else %}
+                                <div class="alert alert-success" role="alert">Completed</div>
+                            {% endif %}
+                        </td>
+                        <td>{{ todo.description }}</td>
+                        <td>
+                            <a class="btn btn-success" href="/update/{{ todo.id }}">Update</a>
+                            <a class="btn btn-danger ms-1" href="/delete/{{ todo.id }}">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block marg %}
+    <span class="centered2"><a href="{{ url_for('appb.base') }}" class="fst-italic link-secondary">base page</a></span>
+{% endblock %}
+{% block footer %}
+    <div>
+        <p class="display-10 fst-italic">@nastinka_krd</p>
+    </div>
+{% endblock %}
+

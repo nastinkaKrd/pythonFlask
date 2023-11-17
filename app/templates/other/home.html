@@ -1,0 +1,17 @@
+{% extends "other/base.html" %}
+{% block title %} <title>home</title> {% endblock %}
+{% block content %}
+    <div class="centered">
+        <h1 class="fst-italic">Home page</h1>
+        <img src="{{ url_for('static', filename='images/my_photo.jpg') }}" height="60%"><br>
+        <h4 class="fst-italic">Hello, my name is Nastia and this is my home page</h4><br>
+    </div>
+{% endblock %}
+{% block marg %}
+    <span class="centered2"><a href="{{ url_for('appb.base') }}" class="fst-italic link-secondary">base page</a></span>
+{% endblock %}
+{% block footer %}
+    <div>
+        <p class="display-10 fst-italic">@nastinka_krd</p>
+    </div>
+{% endblock %}

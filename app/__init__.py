@@ -1,18 +1,40 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_uploads import UploadSet, configure_uploads, IMAGES
 from flask_login import LoginManager
+from config import config
 
-app = Flask(__name__)
-photos = UploadSet("photos", IMAGES)
-app.config["UPLOADED_PHOTOS_DEST"] = "app/static/images/"
-configure_uploads(app, photos)
-app.config.from_object('config')
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-login_manager = LoginManager(app)
-login_manager.login_view = 'login3'
-login_manager.login_message_category = 'info'
+db = SQLAlchemy()
+login_manager = LoginManager()
 
-from app import views
+
+def create_app(config_name='local'):
+    app = Flask(__name__)
+    app.config["UPLOADED_PHOTOS_DEST"] = "app/static/images/"
+
+    if config_name not in config:
+        raise ValueError(f"Invalid configuration name: {config_name}")
+
+    app.config.from_object(config[config_name])
+    db.init_app(app)
+    Migrate(app, db)
+    login_manager.init_app(app)
+    login_manager.login_view = 'login3'
+    login_manager.login_message_category = 'info'
+
+    with app.app_context():
+        from app.about_me import about
+        from app.auth import auth
+        from app.cookie import cookie
+        from app.feedback import feedback_br
+        from app.todo import todo_br
+        from app.views import appb
+
+        app.register_blueprint(about)
+        app.register_blueprint(auth)
+        app.register_blueprint(cookie)
+        app.register_blueprint(feedback_br)
+        app.register_blueprint(todo_br)
+        app.register_blueprint(appb)
+
+    return app
