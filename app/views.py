@@ -17,7 +17,11 @@ nav_links = [
     {"text": "Login3", "url": "auth.login3"},
     {"text": "Logout new", "url": "auth.logout_new"},
     {"text": "Choice", "url": "auth.choice"},
-    {"text": "Cookie", "url": "cookie.login"}
+    {"text": "Cookie", "url": "cookie.login"},
+    {"text": "Create post", "url": "post.create_post"},
+    {"text": "Show posts", "url": "post.list_posts"},
+    {"text": "Create category", "url": "post.create_category"},
+
 ]
 
 

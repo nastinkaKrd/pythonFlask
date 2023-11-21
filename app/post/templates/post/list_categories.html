@@ -1,0 +1,22 @@
+{% extends "other/base.html" %}
+{% block title %} <title>Categories</title> {% endblock %}
+{% block content %}
+<div class="container">
+    <h2>List of Categories</h2>
+    <ul>
+        {% for category in categories %}
+            <h3><li>{{ category.name }}</li></h3>
+        {% endfor %}
+    </ul>
+ <h2><a href="{{ url_for('post.create_category') }}">Create new category</a></h2>
+</div>
+
+{% endblock %}
+{% block marg %}
+    <span class="centered2"><a href="{{ url_for('appb.base') }}" class="fst-italic link-secondary">base page</a></span>
+{% endblock %}
+{% block footer %}
+    <div>
+        <p class="display-10 fst-italic">@nastinka_krd</p>
+    </div>
+{% endblock %}

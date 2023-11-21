@@ -1,0 +1,32 @@
+{% extends "other/base.html" %}
+{% block title %} <title>Post</title> {% endblock %}
+{% block content %}
+<div class="centered2">
+  <h2>{{ post.title }}</h2>
+  <img src="{{url_for('static', filename=post.image) }}" width="300px">
+  <p>{{ post.text }}</p>
+  <p>type: {{ post.type }}</p>
+  <p>created: {{ post.created }}</p>
+  <p>enabled: {{ post.enabled }}</p>
+  <p>user_id : {{ post.user_id }}</p>
+  <p>tags: {{ post.tags }}</p>
+  <p>category : {{ post.category }}</p>
+  {% if current_user.is_authenticated and post.user_id == current_user.id %}
+    <button class="btn btn-primary mb-3 bg-light"><a href="{{ url_for('post.update_post', id=post.id) }}">Edit post</a></button>
+    <form method="POST" action="{{ url_for('post.delete_post', id=post.id) }}" class="row g-3">
+      <div class="form-outline">
+            {{ del_form.hidden_tag() }}
+            {{ del_form.submit(class="btn btn-danger ms-1", label="update")}}
+        </div>
+    </form>
+  {% endif %}
+    </div>
+{% endblock %}
+{% block marg %}
+    <span class="centered2"><a href="{{ url_for('appb.base') }}" class="fst-italic link-secondary">base page</a></span>
+{% endblock %}
+{% block footer %}
+    <div>
+        <p class="display-10 fst-italic">@nastinka_krd</p>
+    </div>
+{% endblock %}

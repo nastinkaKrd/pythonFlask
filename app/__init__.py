@@ -11,13 +11,14 @@ login_manager = LoginManager()
 def create_app(config_name='local'):
     app = Flask(__name__)
     app.config["UPLOADED_PHOTOS_DEST"] = "app/static/images/"
-
+    app.config['STATIC_FOLDER'] = "app/static/images/"
     if config_name not in config:
         raise ValueError(f"Invalid configuration name: {config_name}")
 
     app.config.from_object(config[config_name])
     db.init_app(app)
-    Migrate(app, db)
+    migrate = Migrate(app, db)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
     login_manager.login_view = 'login3'
     login_manager.login_message_category = 'info'
@@ -29,6 +30,7 @@ def create_app(config_name='local'):
         from app.feedback import feedback_br
         from app.todo import todo_br
         from app.views import appb
+        from app.post import post
 
         app.register_blueprint(about)
         app.register_blueprint(auth)
@@ -36,5 +38,6 @@ def create_app(config_name='local'):
         app.register_blueprint(feedback_br)
         app.register_blueprint(todo_br)
         app.register_blueprint(appb)
+        app.register_blueprint(post)
 
     return app

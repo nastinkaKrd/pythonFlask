@@ -1,0 +1,20 @@
+{% extends "other/base.html" %}
+{% block title %} <title>Post</title> {% endblock %}
+{% block content %}
+<div class="container">
+    <h2>List of Posts</h2>
+    <ul>
+        {% for post in posts %}
+            <h4><li><a href="{{ url_for('post.view_post', id=post.id) }}">{{ post.title }}</a>->{{ post.type }}->{{ post.enabled }}</li></h4>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+{% block marg %}
+    <span class="centered2"><a href="{{ url_for('appb.base') }}" class="fst-italic link-secondary">base page</a></span>
+{% endblock %}
+{% block footer %}
+    <div>
+        <p class="display-10 fst-italic">@nastinka_krd</p>
+    </div>
+{% endblock %}
