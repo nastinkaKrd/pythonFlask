@@ -8,6 +8,35 @@
             <h4><li><a href="{{ url_for('post.view_post', id=post.id) }}">{{ post.title }}</a>->{{ post.type }}->{{ post.enabled }}</li></h4>
         {% endfor %}
     </ul>
+    <nav aria-label="Page navigation example">
+  <ul class="pagination">
+    {%- if posts.has_prev %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('post.list_posts', page=posts.prev_num) }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {%- endif %}
+    {%- for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+      {% if page_num %}
+        {% if posts.page == page_num %}
+          <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="{{ url_for('post.list_posts', page=page_num) }}">{{ page_num }}</a></li>
+        {% endif %}
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">...</span></li>
+      {% endif %}
+    {%- endfor %}
+    {%- if posts.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('post.list_posts', page=posts.next_num) }}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    {%- endif %}
+  </ul>
+</nav>
 </div>
 {% endblock %}
 {% block marg %}

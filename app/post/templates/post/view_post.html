@@ -13,12 +13,29 @@
   <p>category : {{ post.category }}</p>
   {% if current_user.is_authenticated and post.user_id == current_user.id %}
     <button class="btn btn-primary mb-3 bg-light"><a href="{{ url_for('post.update_post', id=post.id) }}">Edit post</a></button>
-    <form method="POST" action="{{ url_for('post.delete_post', id=post.id) }}" class="row g-3">
-      <div class="form-outline">
-            {{ del_form.hidden_tag() }}
-            {{ del_form.submit(class="btn btn-danger ms-1", label="update")}}
-        </div>
-    </form>
+    <button class="btn btn-danger ms-1" onclick="deleteConfirmation()">Delete post</button>
+      <script>
+        function deleteConfirmation() {
+          if (window.confirm("Are you sure you want to delete the post?")) {
+            fetch("{{ url_for('post.delete_post', id=post.id) }}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            window.location.href = "{{ url_for('post.list_posts') }}";
+          } else {
+            console.error("Failed to delete post");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+          }
+        }
+      </script>
   {% endif %}
     </div>
 {% endblock %}

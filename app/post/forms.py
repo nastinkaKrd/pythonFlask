@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     text = TextAreaField('Text', validators=[DataRequired()])
-    image = FileField('Profile Image')
+    image = FileField('Image')
     type = SelectField('Type', choices=[('news', 'News'), ('publication', 'Publication'), ('other', 'Other')], validators=[DataRequired()])
     category = SelectField('Category', coerce=int)
     tags = StringField('Tags')
@@ -16,7 +16,7 @@ class PostForm(FlaskForm):
 class UpdateForm(FlaskForm):
     title = StringField('Title')
     text = TextAreaField('Text')
-    image = FileField('Profile Image')
+    image = FileField('Image')
     type = SelectField('Type', choices=[('news', 'News'), ('publication', 'Publication'), ('other', 'Other')])
     category = SelectField('Category', coerce=int)
     tags = StringField('Tags')
