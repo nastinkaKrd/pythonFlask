@@ -17,7 +17,7 @@ from app import create_app
 @login_required
 def change_user_password():
     form = ChangeUserPassword()
-    if form.validate_on_submit():
+    if form.validate_on_submit() or request.method == 'POST':
         old_password = form.old_password.data
         new_password = form.password.data
         user = User.query.filter_by(email=current_user.email).first()
@@ -44,7 +44,7 @@ def after_request(response):
 def my_profile():
     app = create_app()
     form = UpdateAccountForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() or request.method == 'POST':
         current_user.username = form.username.data
         current_user.email = form.email.data
         current_user.about_me = form.about_me.data
@@ -74,7 +74,7 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('appb.base'))
     form = RegistrationForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() or request.method == 'POST':
         new_username = form.username.data
         new_email = form.email.data
         new_password = form.password.data
@@ -106,7 +106,7 @@ def login3():
     if current_user.is_authenticated:
         return redirect(url_for('auth.choice'))
     form = LoginForm2()
-    if form.validate_on_submit():
+    if form.validate_on_submit() or request.method == 'POST':
         user = User.query.filter_by(email=form.email.data).first()
         login_user(user, remember=form.remember.data)
         flash('You have been logged in!', category='success')

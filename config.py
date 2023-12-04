@@ -22,8 +22,16 @@ class LocalConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
+class TestConfig(Config):
+    DEVELOPMENT = True
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///test.sqlite'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
 csrf.init_app(app)
 
 config = {
-    'local': LocalConfig
+    'local': LocalConfig,
+    'test': TestConfig
 }
