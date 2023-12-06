@@ -9,3 +9,5 @@ wtforms~=3.1.0
 alembic~=1.12.1
 SQLAlchemy~=2.0.22
 werkzeug~=3.0.1
+Pillow~=10.1.0
+pytest~=7.4.3

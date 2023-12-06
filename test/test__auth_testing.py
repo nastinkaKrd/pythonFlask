@@ -13,15 +13,14 @@ class TestAuthBlueprint(TestCase):
         return app
 
     def setUp(self):
+        db.create_all()
         self.user = User(username='testing_user', email='testing@example.com', password='test_password')
         db.session.add(self.user)
         db.session.commit()
 
     def tearDown(self):
-        all_users = db.session.query(User).all()
-        for user in all_users:
-            db.session.delete(user)
-        db.session.commit()
+        db.session.remove()
+        db.drop_all()
 
     def test_register(self):
         user_data = {

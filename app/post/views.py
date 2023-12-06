@@ -14,29 +14,29 @@ def create_post():
         form = PostForm()
         categories = Category.query.all()
         form.category.choices = [(category.id, category.name) for category in categories]
-        if form.validate_on_submit():
+        if form.validate_on_submit() or request.method == 'POST':
             profile_image = form.image.data
             if profile_image:
                 filename = secure_filename(profile_image.filename)
                 unique_filename = f"{int(time.time())}_{filename}.jpg"
                 file_path = f'images/{unique_filename}'
                 profile_image.save(f'app/static/{file_path}')
-                tags = form.tags.data.split(',')
-                tags = [tag.strip() for tag in tags if tag]
-                category_id = form.category.data
-                category = Category.query.get(category_id)
-                new_post = Post(
-                    title=form.title.data,
-                    text=form.text.data,
-                    type=form.type.data,
-                    image=file_path if profile_image else None,
-                    user_id=current_user.id,
-                    category=category,
-                    tags=[Tag.get_or_create(tag) for tag in tags]
-                )
-                db.session.add(new_post)
-                db.session.commit()
-                return redirect(url_for('post.list_posts'))
+            tags = form.tags.data.split(',')
+            tags = [tag.strip() for tag in tags if tag]
+            category_id = form.category.data
+            category = Category.query.get(category_id)
+            new_post = Post(
+                title=form.title.data,
+                text=form.text.data,
+                type=form.type.data,
+                image=file_path if profile_image else None,
+                user_id=current_user.id,
+                category=category,
+                tags=[Tag.get_or_create(tag) for tag in tags]
+            )
+            db.session.add(new_post)
+            db.session.commit()
+            return redirect(url_for('post.list_posts'))
     else:
         return redirect(url_for('auth.choice'))
     return render_template('create_post.html', form=form, categories=categories)
@@ -63,7 +63,7 @@ def update_post(id):
     post = Post.query.get(id)
     form = UpdateForm()
     form.category.choices = [(category.id, category.name) for category in categories]
-    if form.validate_on_submit():
+    if form.validate_on_submit() or request.method == 'POST':
         if form.title.data:
             post.title = form.title.data
         if form.text.data:
@@ -114,7 +114,7 @@ def list_categories():
 @post.route('/categories/create', methods=['GET', 'POST'])
 def create_category():
     form = CategoryForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() or request.method == 'POST':
         name = form.name.data
         category = Category(name=name)
         db.session.add(category)
