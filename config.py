@@ -1,3 +1,4 @@
+from flask_jwt_extended import JWTManager
 from flask_wtf import CSRFProtect
 from flask import Flask
 from os import environ, path
@@ -13,6 +14,7 @@ class Config:
     DEVELOPMENT = False
     SECRET_KEY = environ.get('SECRET_KEY') or 'secret'
     FLASK_SECRET = SECRET_KEY
+    JWT_SECRET_KEY = SECRET_KEY
 
 
 class LocalConfig(Config):
