@@ -35,10 +35,12 @@ class UserResource(Resource):
         args = parser.parse_args(strict=True)
         username = args.get('username')
         email = args.get('email')
-        if not (username or email):
-            abort(400, message="Write all args")
-        user.username = username
-        user.email = email
+        if not (username and email):
+            abort(400, message="Write arg")
+        if username:
+            user.username = username
+        if email:
+            user.email = email
         db.session.commit()
         serialized_user = user_schema.dump(user)
         return make_response(jsonify(serialized_user), 200)
