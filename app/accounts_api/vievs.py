@@ -1,13 +1,10 @@
 from flask import Blueprint, jsonify, make_response
 from flask_restful import Resource, Api, reqparse, abort
 from marshmallow import Schema, fields
-from app import create_app
-from flask_restful_swagger_2 import Api as SwaggerApi
 from ..auth.model import db, User
 
 api_todo_br3 = Blueprint("api_todo_br3", __name__)
 api = Api(api_todo_br3)
-
 
 
 class UserSchema(Schema):
@@ -38,6 +35,8 @@ class UserResource(Resource):
         args = parser.parse_args(strict=True)
         username = args.get('username')
         email = args.get('email')
+        if not (username or email):
+            abort(400, message="Write all args")
         user.username = username
         user.email = email
         db.session.commit()
@@ -68,6 +67,8 @@ class UsersResource(Resource):
         username = args.get('username')
         email = args.get('email')
         password = args.get('password')
+        if not (username or email or password):
+            abort(400, message="Write all args")
         new_user = User(username=username, email=email, password=password)
         db.session.add(new_user)
         db.session.commit()
